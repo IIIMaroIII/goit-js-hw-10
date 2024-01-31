@@ -3,6 +3,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 import iconError from '../img/error.svg';
 import iconSuccess from '../img/ok.svg';
 import iconHello from '../img/hello.svg';
+import iconCaution from '../img/caution.svg';
 import showNotification from '../scripts/showNotification_iziToast';
 import convertMs from '../scripts/convertMs';
 
@@ -47,6 +48,21 @@ class Timer {
     this.validateTime();
     refs.startBtn.setAttribute('disabled', true);
     refs.input.setAttribute('disabled', true);
+    setTimeout(() => {
+      this.stop();
+    }, 4000);
+  }
+
+  stop() {
+    clearInterval(intervalId);
+    showNotification(
+      'Finished',
+      'Time`s up!',
+      'rgba(0, 153, 255, 1)',
+      iconHello
+    );
+    console.log(timeDiff);
+    console.log(timeObj);
   }
 
   validateTime() {
@@ -54,30 +70,25 @@ class Timer {
       return showNotification(
         'Error!',
         'Please choose a date in the future',
-        'red',
+        'rgba(239, 64, 64, 1)',
         iconError
       );
     } else {
       showNotification(
         'Success!',
         'The timer has been started!',
-        'green',
+        'rgba(89, 161, 13, 1)',
         iconSuccess
       );
       intervalId = setInterval(() => {
         timeDiff -= 1000;
+        console.log(timeDiff);
 
         timeObj = convertMs(timeDiff);
 
         this.tick(timeObj);
       }, 1000);
-      setTimeout(() => {
-        clearInterval(intervalId);
-        showNotification('Finished', 'Time`s up!', 'White', iconHello);
-      }, timeDiff);
     }
-    console.log(userSelectedDate);
-    console.log(timeDiff);
   }
 }
 
