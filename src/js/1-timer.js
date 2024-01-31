@@ -48,9 +48,15 @@ class Timer {
     this.validateTime();
     refs.startBtn.setAttribute('disabled', true);
     refs.input.setAttribute('disabled', true);
-    setTimeout(() => {
-      this.stop();
-    }, 4000);
+    if (timeDiff > 2147483647) {
+      setTimeout(() => {
+        this.stop();
+      }, 2147483640);
+    } else {
+      setTimeout(() => {
+        this.stop();
+      }, timeDiff);
+    }
   }
 
   stop() {
@@ -61,8 +67,6 @@ class Timer {
       'rgba(0, 153, 255, 1)',
       iconHello
     );
-    console.log(timeDiff);
-    console.log(timeObj);
   }
 
   validateTime() {
@@ -82,10 +86,7 @@ class Timer {
       );
       intervalId = setInterval(() => {
         timeDiff -= 1000;
-        console.log(timeDiff);
-
         timeObj = convertMs(timeDiff);
-
         this.tick(timeObj);
       }, 1000);
     }
