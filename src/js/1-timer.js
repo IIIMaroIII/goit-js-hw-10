@@ -1,5 +1,15 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import iconError from '../img/error.svg';
+import iconSuccess from '../img/ok.svg';
+import iconHello from '../img/hello.svg';
+import showNotification from '../scripts/showNotification_iziToast';
+import convertMs from '../scripts/convertMs';
+
+let intervalId;
+let userSelectedDate = '';
+let timeDiff = 0;
+let timeObj = {};
 
 const refs = {
   input: document.querySelector('input#datetime-picker'),
@@ -10,52 +20,80 @@ const refs = {
   seconds: document.querySelector('[data-seconds]'),
 };
 
-refs.startBtn.setAttribute('disabled', true);
-
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
-    // timeDifference(selectedDates[0]);
+    userSelectedDate = selectedDates[0];
+    refs.startBtn.removeAttribute('disabled');
   },
 };
 
-class Timer {
-  start() {}
-}
+refs.startBtn.setAttribute('disabled', true);
+refs.startBtn.addEventListener('click', onStartBtn);
 
 flatpickr(refs.input, options);
 
-// function timeDifference(choosenDate) {
-//   const currentDate = new Date();
-//   if (choosenDate < currentDate) {
-//     return window.alert('Please choose a date in the future');
-//   }
-//   differenceBetweenChoosenAndCurrentDate = choosenDate - currentDate;
-//   dateFormat = convertMs(differenceBetweenChoosenAndCurrentDate);
-//   const addZero = addZeroToValue(toString({ days, hours, minutes, seconds }));
-//   timerRendering(dateFormat);
-//   refs.startBtn.removeAttribute('disabled');
-// }
+class Timer {
+  constructor(tick) {
+    this.tick = tick;
+  }
 
-function convertMs(ms) {
-  // Number of milliseconds per unit of time
-  const second = 1000;
-  const minute = second * 60;
-  const hour = minute * 60;
-  const day = hour * 24;
+  start() {
+    this.initTime = Date.now();
+    timeDiff = userSelectedDate - this.initTime;
+    this.validateTime();
+    refs.startBtn.setAttribute('disabled', true);
+    refs.input.setAttribute('disabled', true);
+  }
 
-  // Remaining days
-  const days = Math.floor(ms / day);
-  // Remaining hours
-  const hours = Math.floor((ms % day) / hour);
-  // Remaining minutes
-  const minutes = Math.floor(((ms % day) % hour) / minute);
-  // Remaining seconds
-  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+  validateTime() {
+    if (timeDiff < 0) {
+      return showNotification(
+        'Error!',
+        'Please choose a date in the future',
+        'red',
+        iconError
+      );
+    } else {
+      showNotification(
+        'Success!',
+        'The timer has been started!',
+        'green',
+        iconSuccess
+      );
+      intervalId = setInterval(() => {
+        timeDiff -= 1000;
 
-  return { days, hours, minutes, seconds };
+        timeObj = convertMs(timeDiff);
+
+        this.tick(timeObj);
+      }, 1000);
+      setTimeout(() => {
+        clearInterval(intervalId);
+        showNotification('Finished', 'Time`s up!', 'White', iconHello);
+      }, timeDiff);
+    }
+    console.log(userSelectedDate);
+    console.log(timeDiff);
+  }
+}
+
+const timer = new Timer(tick);
+
+function tick({ days, hours, minutes, seconds }) {
+  refs.days.textContent = addZero(days);
+  refs.hours.textContent = addZero(hours);
+  refs.minutes.textContent = addZero(minutes);
+  refs.seconds.textContent = addZero(seconds);
+}
+
+function onStartBtn(e) {
+  timer.start();
+}
+
+function addZero(num) {
+  return num.toString().padStart(2, '0');
 }
