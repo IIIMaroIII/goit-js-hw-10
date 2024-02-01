@@ -7,10 +7,10 @@ import iconCaution from '../img/caution.svg';
 import showNotification from '../scripts/showNotification_iziToast';
 import convertMs from '../scripts/convertMs';
 
-let intervalId;
-let userSelectedDate = '';
+let intervalId = 0;
+let userSelectedDate;
 let timeDiff = 0;
-let timeObj = {};
+let timeObj;
 
 const refs = {
   input: document.querySelector('input#datetime-picker'),
@@ -19,6 +19,7 @@ const refs = {
   hours: document.querySelector('[data-hours]'),
   minutes: document.querySelector('[data-minutes]'),
   seconds: document.querySelector('[data-seconds]'),
+  spanValues: document.querySelectorAll('div.field > span.value'),
 };
 
 const options = {
@@ -27,7 +28,7 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    userSelectedDate = selectedDates[0];
+    userSelectedDate = selectedDates[0].getTime();
     refs.startBtn.removeAttribute('disabled');
   },
 };
@@ -40,35 +41,17 @@ flatpickr(refs.input, options);
 class Timer {
   constructor(tick) {
     this.tick = tick;
+    this.intervalId = intervalId;
   }
 
   start() {
     this.initTime = Date.now();
     timeDiff = userSelectedDate - this.initTime;
+
     this.validateTime();
     refs.startBtn.setAttribute('disabled', true);
     refs.input.setAttribute('disabled', true);
-    if (timeDiff > 2147483647) {
-      setTimeout(() => {
-        this.stop();
-      }, 2147483640);
-    } else {
-      setTimeout(() => {
-        this.stop();
-      }, timeDiff);
-    }
   }
-
-  stop() {
-    clearInterval(intervalId);
-    showNotification(
-      'Finished',
-      'Time`s up!',
-      'rgba(0, 153, 255, 1)',
-      iconHello
-    );
-  }
-
   validateTime() {
     if (timeDiff < 0) {
       return showNotification(
@@ -90,6 +73,15 @@ class Timer {
         this.tick(timeObj);
       }, 1000);
     }
+  }
+  stop() {
+    clearInterval(intervalId);
+    showNotification(
+      'Finished',
+      'Time`s up!',
+      'rgba(0, 153, 255, 1)',
+      iconHello
+    );
   }
 }
 
