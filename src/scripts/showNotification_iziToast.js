@@ -17,7 +17,7 @@ export default function showNotification(
     message: `${message}`,
     messageSize: '16px',
     closeOnEscape: true,
-    position: 'topCenter',
+    position: 'topRight',
     backgroundColor: `${backgroundColor}`,
     iconUrl: `${icon}`,
   });
