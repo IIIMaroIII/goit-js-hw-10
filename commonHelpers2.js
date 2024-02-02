@@ -1,2 +1,2 @@
-import{s as o}from"./assets/showNotification_iziToast-b9f13be8.js";import"./assets/vendor-77e16229.js";o();
+import{s as i,a as r,i as s}from"./assets/showNotification_iziToast-1657a64c.js";import"./assets/vendor-77e16229.js";const c={form:document.querySelector(".form")};c.form.addEventListener("submit",a);function a(e){e.preventDefault();const t=e.currentTarget.elements.delay.value,n=e.currentTarget.elements.state.value;l(t,n).then(o=>{m(o,t)}).catch(o=>{u(o,t)})}function m(e,t){setTimeout(()=>{i("",e,"green",r)},t)}function u(e,t){setTimeout(()=>{i("",e,"red",s)},t)}function l(e=0,t=""){return new Promise((n,o)=>{t==="fulfilled"?n(`Fulfilled promise in ${e}ms`):o(`Rejected promise in ${e}ms`)})}
 //# sourceMappingURL=commonHelpers2.js.map
