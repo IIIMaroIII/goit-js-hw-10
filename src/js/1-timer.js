@@ -70,6 +70,10 @@ class Timer {
       intervalId = setInterval(() => {
         timeDiff -= 1000;
         timeObj = convertMs(timeDiff);
+        const allEqualZero = Object.values(timeObj).every(value => value === 0);
+        if (allEqualZero) {
+          this.stop();
+        }
         this.tick(timeObj);
       }, 1000);
     }
