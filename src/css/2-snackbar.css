@@ -1,0 +1,54 @@
+@import url(./styles.css);
+
+.form {
+  width: 360px;
+}
+
+.form > label {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: #2e2f42;
+
+  margin-bottom: 16px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.input--snackbar {
+  width: 360px;
+  border: 1px solid #808080;
+  border-radius: 4px;
+}
+
+fieldset {
+  font-family: var(--font-family);
+  padding-top: 14px;
+  padding-bottom: 12px;
+  border-width: 1px;
+  border-radius: 4px;
+  stroke-width: 1px;
+  border-color: #808080;
+
+  margin-bottom: 24px;
+}
+fieldset:hover {
+  border-color: #000;
+}
+
+.fieldset-labels {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+}
+
+fieldset > legend {
+  margin-left: 28px;
+}
+
+.form > button {
+  width: 100%;
+}

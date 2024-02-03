@@ -1,24 +1,14 @@
-/* Reset styles */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
-  font-family: Montserrat;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 24px;
-  letter-spacing: 0.04em;
-  text-align: left;
-
-  margin-top: 10px;
-  margin-bottom: 10px;
+body {
+  margin: 0;
+  padding-left: 156px;
+  padding-right: 156px;
 }
 
-p:last-child {
-  margin-bottom: 0;
+fieldset {
+  padding: 0;
+  box-sizing: border-box;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
 }
 
 ul {
@@ -40,4 +30,7 @@ img {
   display: block;
   max-width: 100%;
   height: auto;
+}
+input {
+  box-sizing: border-box;
 }

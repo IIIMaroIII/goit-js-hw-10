@@ -6,6 +6,8 @@ const refs = {
   form: document.querySelector('.form'),
 };
 
+let dataValues = [];
+
 refs.form.addEventListener('submit', onFormSubmit);
 
 function onFormSubmit(evt) {
