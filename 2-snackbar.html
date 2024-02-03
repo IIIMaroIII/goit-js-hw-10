@@ -10,24 +10,34 @@
     <link rel="modulepreload" crossorigin href="/goit-js-hw-10/assets/vendor-77e16229.js">
     <link rel="modulepreload" crossorigin href="/goit-js-hw-10/assets/showNotification_iziToast-1657a64c.js">
     <link rel="stylesheet" href="/goit-js-hw-10/assets/vendor-7a007824.css">
+    <link rel="stylesheet" href="/goit-js-hw-10/assets/2-snackbar-376dbc77.css">
   </head>
   <body>
+       <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a href="./index.html" class="nav-link">Go back</a>
+        </li>
+    </nav>
     <form class="form">
       <label>
         Delay (ms)
-        <input type="number" name="delay" required />
+        <input class="input--snackbar" type="number" name="delay" required />
       </label>
 
       <fieldset>
         <legend>State</legend>
-        <label>
-          <input type="radio" name="state" value="fulfilled" required />
+        <div class="fieldset-labels">
+          <label>
+          <input  type="radio" name="state" value="fulfilled" required />
           Fulfilled
         </label>
         <label>
-          <input type="radio" name="state" value="rejected" required />
+          <input  type="radio" name="state" value="rejected" required />
           Rejected
         </label>
+        </div>
+        
       </fieldset>
 
       <button type="submit">Create notification</button>
