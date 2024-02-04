@@ -12,6 +12,8 @@ let userSelectedDate;
 let timeDiff = 0;
 let timeObj;
 
+//Object refs - is the list of links
+
 const refs = {
   input: document.querySelector('input#datetime-picker'),
   startBtn: document.querySelector('[data-start]'),
@@ -22,62 +24,51 @@ const refs = {
   spanValues: document.querySelectorAll('div.field > span.value'),
 };
 
-const options = {
-  enableTime: true,
-  time_24hr: true,
-  defaultDate: new Date(),
-  minuteIncrement: 1,
-  onClose(selectedDates) {
-    userSelectedDate = selectedDates[0].getTime();
-    refs.startBtn.removeAttribute('disabled');
-  },
-};
-
-refs.startBtn.setAttribute('disabled', true);
-refs.startBtn.addEventListener('click', onStartBtn);
-
-flatpickr(refs.input, options);
-
 class Timer {
-  constructor(tick) {
-    this.tick = tick;
+  constructor(updateTimerDisplay) {
+    this.updateTimerDisplay = updateTimerDisplay;
     this.intervalId = intervalId;
   }
 
-  start() {
-    this.initTime = Date.now();
-    timeDiff = userSelectedDate - this.initTime;
+  // Method start() starts Timer after the date has been choosen.
 
-    this.validateTime();
-    refs.startBtn.setAttribute('disabled', true);
-    refs.input.setAttribute('disabled', true);
+  start() {
+    intervalId = setInterval(() => {
+      timeDiff -= 1000;
+      timeObj = convertMs(timeDiff);
+      const allEqualZero = Object.values(timeObj).every(value => value === 0);
+      if (allEqualZero) {
+        this.stop();
+      }
+      this.updateTimerDisplay(timeObj);
+    }, 1000);
+    showNotification(
+      'Success!',
+      'The timer`s been started!',
+      '#59a10d',
+      iconSuccess
+    );
   }
-  validateTime() {
-    if (timeDiff < 0) {
-      return showNotification(
+
+  // Method validateTime() is checking the date has been choosen correctly (not in the future).
+
+  validateTime(userSelectedDate) {
+    timeDiff = userSelectedDate - options.defaultDate.getTime();
+    if (timeDiff <= 0) {
+      refs.startBtn.setAttribute('disabled', true);
+      showNotification(
         'Error!',
         'Please choose a date in the future',
         'rgba(239, 64, 64, 1)',
         iconError
       );
     } else {
-      showNotification(
-        'Success!',
-        'The timer has been started!',
-        'rgba(89, 161, 13, 1)',
-        iconSuccess
-      );
-      intervalId = setInterval(() => {
-        timeDiff -= 1000;
-        timeObj = convertMs(timeDiff);
-        const allEqualZero = Object.values(timeObj).every(value => value === 0);
-        if (allEqualZero) {
-          this.stop();
-        }
-        this.tick(timeObj);
-      }, 1000);
+      refs.startBtn.removeAttribute('disabled');
     }
   }
+
+  // Method stop() stops the timer when the time has been up.
+
   stop() {
     clearInterval(intervalId);
     showNotification(
@@ -89,18 +80,41 @@ class Timer {
   }
 }
 
-const timer = new Timer(tick);
+const timer = new Timer(updateTimerDisplay);
 
-function tick({ days, hours, minutes, seconds }) {
+// Object options is the set of flatpickr`s options.
+
+const options = {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose(selectedDates) {
+    userSelectedDate = selectedDates[0].getTime();
+    timer.validateTime(userSelectedDate);
+  },
+};
+
+refs.startBtn.addEventListener('click', onStartBtn);
+
+flatpickr(refs.input, options);
+
+// Function updateTimerDisplay() displays the exact time which has been left.
+
+function updateTimerDisplay({ days, hours, minutes, seconds }) {
   refs.days.textContent = addZero(days);
   refs.hours.textContent = addZero(hours);
   refs.minutes.textContent = addZero(minutes);
   refs.seconds.textContent = addZero(seconds);
 }
 
+// Function onStartBtn() processes the event on button submit.
+
 function onStartBtn(e) {
   timer.start();
 }
+
+// Function addZero() adds the symbol '0' in the beginning if it needs to be added.
 
 function addZero(num) {
   return num.toString().padStart(2, '0');
