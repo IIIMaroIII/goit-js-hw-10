@@ -48,6 +48,7 @@ class Timer {
       '#59a10d',
       iconSuccess
     );
+    refs.startBtn.setAttribute('disabled', true);
   }
 
   // Method validateTime() is checking the date has been choosen correctly (not in the future).
