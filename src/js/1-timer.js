@@ -28,6 +28,8 @@ refs.startBtn.addEventListener('click', onStartBtn);
 
 function onStartBtn(e) {
   timer.start();
+  e.target.setAttribute('disabled', true);
+  refs.input.setAttribute('disabled', true);
 }
 
 class Timer {
@@ -66,7 +68,6 @@ class Timer {
       this.updateTimerDisplay(timeObj);
     }, 1000);
     showNotification(this.notificationTimerStarted);
-    refs.startBtn.setAttribute('disabled', true);
   }
 
   // Method validateTime() is checking the date has been choosen correctly (not in the future).
@@ -86,6 +87,7 @@ class Timer {
   stop() {
     clearInterval(intervalId);
     showNotification(this.notificationTimeIsUp);
+    refs.input.removeAttribute('disabled');
   }
   // Function updateTimerDisplay() displays the exact time which has been left.
 
