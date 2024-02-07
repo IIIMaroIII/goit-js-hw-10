@@ -5,7 +5,6 @@ import iconSuccess from '../img/ok.svg';
 import iconHello from '../img/hello.svg';
 import iconCaution from '../img/caution.svg';
 import showNotification from '../scripts/showNotification_iziToast';
-// import convertMs from '../scripts/convertMs';
 
 let intervalId = 0;
 let userSelectedDate;
