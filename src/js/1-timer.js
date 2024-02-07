@@ -5,7 +5,7 @@ import iconSuccess from '../img/ok.svg';
 import iconHello from '../img/hello.svg';
 import iconCaution from '../img/caution.svg';
 import showNotification from '../scripts/showNotification_iziToast';
-import convertMs from '../scripts/convertMs';
+// import convertMs from '../scripts/convertMs';
 
 let intervalId = 0;
 let userSelectedDate;
@@ -23,10 +23,34 @@ const refs = {
   seconds: document.querySelector('[data-seconds]'),
   spanValues: document.querySelectorAll('div.field > span.value'),
 };
+refs.startBtn.setAttribute('disabled', true);
+
+refs.startBtn.addEventListener('click', onStartBtn);
+
+function onStartBtn(e) {
+  timer.start();
+}
 
 class Timer {
-  constructor(updateTimerDisplay) {
-    this.updateTimerDisplay = updateTimerDisplay;
+  constructor() {
+    this.notificationTimerStarted = {
+      title: 'Success!',
+      message: 'The timer`s been started!',
+      color: '#59a10d',
+      icon: iconSuccess,
+    };
+    this.notificationDateInThePast = {
+      title: 'Error!',
+      message: 'Please choose a date in the future',
+      color: 'rgba(239, 64, 64, 1)',
+      icon: iconError,
+    };
+    this.notificationTimeIsUp = {
+      title: 'Finished',
+      message: 'Time`s up!',
+      color: 'rgba(0, 153, 255, 1)',
+      icon: iconHello,
+    };
     this.intervalId = intervalId;
   }
 
@@ -35,19 +59,14 @@ class Timer {
   start() {
     intervalId = setInterval(() => {
       timeDiff -= 1000;
-      timeObj = convertMs(timeDiff);
+      timeObj = this.convertMs(timeDiff);
       const allEqualZero = Object.values(timeObj).every(value => value === 0);
       if (allEqualZero) {
         this.stop();
       }
       this.updateTimerDisplay(timeObj);
     }, 1000);
-    showNotification(
-      'Success!',
-      'The timer`s been started!',
-      '#59a10d',
-      iconSuccess
-    );
+    showNotification(this.notificationTimerStarted);
     refs.startBtn.setAttribute('disabled', true);
   }
 
@@ -57,12 +76,7 @@ class Timer {
     timeDiff = userSelectedDate - options.defaultDate.getTime();
     if (timeDiff <= 0) {
       refs.startBtn.setAttribute('disabled', true);
-      showNotification(
-        'Error!',
-        'Please choose a date in the future',
-        'rgba(239, 64, 64, 1)',
-        iconError
-      );
+      showNotification(this.notificationDateInThePast);
     } else {
       refs.startBtn.removeAttribute('disabled');
     }
@@ -72,16 +86,44 @@ class Timer {
 
   stop() {
     clearInterval(intervalId);
-    showNotification(
-      'Finished',
-      'Time`s up!',
-      'rgba(0, 153, 255, 1)',
-      iconHello
-    );
+    showNotification(this.notificationTimeIsUp);
+  }
+  // Function updateTimerDisplay() displays the exact time which has been left.
+
+  updateTimerDisplay({ days, hours, minutes, seconds }) {
+    refs.days.textContent = this.addZero(days);
+    refs.hours.textContent = this.addZero(hours);
+    refs.minutes.textContent = this.addZero(minutes);
+    refs.seconds.textContent = this.addZero(seconds);
+  }
+
+  // Function addZero() adds the symbol '0' in the beginning if it needs to be added.
+
+  addZero(num) {
+    return num.toString().padStart(2, '0');
+  }
+  // convertMs(ms) converts MS to object (days,hours,minutes,seconds)
+  convertMs(ms) {
+    // Number of milliseconds per unit of time
+    const second = 1000;
+    const minute = second * 60;
+    const hour = minute * 60;
+    const day = hour * 24;
+
+    // Remaining days
+    const days = Math.floor(ms / day);
+    // Remaining hours
+    const hours = Math.floor((ms % day) / hour);
+    // Remaining minutes
+    const minutes = Math.floor(((ms % day) % hour) / minute);
+    // Remaining seconds
+    const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+
+    return { days, hours, minutes, seconds };
   }
 }
 
-const timer = new Timer(updateTimerDisplay);
+const timer = new Timer();
 
 // Object options is the set of flatpickr`s options.
 
@@ -96,27 +138,6 @@ const options = {
   },
 };
 
-refs.startBtn.addEventListener('click', onStartBtn);
-
 flatpickr(refs.input, options);
 
-// Function updateTimerDisplay() displays the exact time which has been left.
-
-function updateTimerDisplay({ days, hours, minutes, seconds }) {
-  refs.days.textContent = addZero(days);
-  refs.hours.textContent = addZero(hours);
-  refs.minutes.textContent = addZero(minutes);
-  refs.seconds.textContent = addZero(seconds);
-}
-
 // Function onStartBtn() processes the event on button submit.
-
-function onStartBtn(e) {
-  timer.start();
-}
-
-// Function addZero() adds the symbol '0' in the beginning if it needs to be added.
-
-function addZero(num) {
-  return num.toString().padStart(2, '0');
-}
