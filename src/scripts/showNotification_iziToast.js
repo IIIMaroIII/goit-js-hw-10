@@ -5,7 +5,12 @@ import iconSuccess from '../img/ok.svg';
 import iconHello from '../img/hello.svg';
 import iconCaution from '../img/caution.svg';
 
-export default function showNotification({ title, message, color, icon }) {
+export default function showNotification({
+  title = '',
+  message = '',
+  color = 'white',
+  icon = iconCaution,
+}) {
   return iziToast.show({
     titleSize: '16px',
     title: `${title}`,

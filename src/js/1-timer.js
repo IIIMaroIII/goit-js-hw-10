@@ -3,13 +3,9 @@ import 'flatpickr/dist/flatpickr.min.css';
 import iconError from '../img/error.svg';
 import iconSuccess from '../img/ok.svg';
 import iconHello from '../img/hello.svg';
-import iconCaution from '../img/caution.svg';
 import showNotification from '../scripts/showNotification_iziToast';
 
-let intervalId = 0;
 let userSelectedDate;
-let timeDiff = 0;
-let timeObj;
 
 //Object refs - is the list of links
 
@@ -20,7 +16,6 @@ const refs = {
   hours: document.querySelector('[data-hours]'),
   minutes: document.querySelector('[data-minutes]'),
   seconds: document.querySelector('[data-seconds]'),
-  spanValues: document.querySelectorAll('div.field > span.value'),
 };
 refs.startBtn.setAttribute('disabled', true);
 
@@ -52,20 +47,24 @@ class Timer {
       color: 'rgba(0, 153, 255, 1)',
       icon: iconHello,
     };
-    this.intervalId = intervalId;
+    this.intervalId = null;
+    this.timeDiff = 0;
+    this.timeObj = {};
   }
 
   // Method start() starts Timer after the date has been choosen.
 
   start() {
-    intervalId = setInterval(() => {
-      timeDiff -= 1000;
-      timeObj = this.convertMs(timeDiff);
-      const allEqualZero = Object.values(timeObj).every(value => value === 0);
+    this.intervalId = setInterval(() => {
+      this.timeDiff -= 1000;
+      this.timeObj = this.convertMs(this.timeDiff);
+      const allEqualZero = Object.values(this.timeObj).every(
+        value => value === 0
+      );
       if (allEqualZero) {
         this.stop();
       }
-      this.updateTimerDisplay(timeObj);
+      this.updateTimerDisplay(this.timeObj);
     }, 1000);
     showNotification(this.notificationTimerStarted);
   }
@@ -73,8 +72,8 @@ class Timer {
   // Method validateTime() is checking the date has been choosen correctly (not in the future).
 
   validateTime(userSelectedDate) {
-    timeDiff = userSelectedDate - options.defaultDate.getTime();
-    if (timeDiff <= 0) {
+    this.timeDiff = userSelectedDate - options.defaultDate.getTime();
+    if (this.timeDiff <= 0) {
       refs.startBtn.setAttribute('disabled', true);
       showNotification(this.notificationDateInThePast);
     } else {
@@ -85,7 +84,7 @@ class Timer {
   // Method stop() stops the timer when the time has been up.
 
   stop() {
-    clearInterval(intervalId);
+    clearInterval(this.intervalId);
     showNotification(this.notificationTimeIsUp);
     refs.input.removeAttribute('disabled');
   }
